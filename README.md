@@ -17,6 +17,7 @@ An end-to-end, lightweight inventory management platform designed for daily stoc
 * **v2.0 (Production Backend):** Refactored into a scalable enterprise solution powered by **FastAPI**, **MySQL**, **SQLAlchemy ORM**, **Docker Compose**, automated testing, **GitHub Actions CI**, and **Docker Hub** integration.
 * **v3.0 (Cloud-Native Infrastructure):** Extended with **AWS Cloud Infrastructure** (ECS Fargate, RDS, ALB, ACM, KMS) automated via **Terraform (IaC)** for production-grade cloud deployment.
 * **v4.0 (Next-Gen Container Orchestration):** Migrated and expanded infrastructure to **AWS EKS (Elastic Kubernetes Service)** and **Kubernetes Orchestration**, implementing Helm charts, Terraform-managed K8s manifests, and Horizontal Pod Autoscaling (HPA) for enterprise-grade workloads.
+* **v4.1 (Observability & Monitoring):** Integrated Prometheus & Grafana stack via Helm, configuring custom K8s metrics dashboards and FastAPI endpoint telemetry. (in progress)
 
 ---
 
