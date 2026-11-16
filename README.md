@@ -133,19 +133,13 @@ inventory-db-aws-gcp-tf-k8/
 │   └── item.py                # Core Domain models
 ├── data/
 │   └── sample_inventory.xlsx  # Safe sample dataset for local testing
+├── environment/               # Cloud infrastructure environments (Terraform)
+│   ├── aws/                   # AWS ECS/EKS Infrastructure modules
+│   └── gcp/                   # GCP Cloud Run & Cloud SQL Infrastructure modules
+├── inventory-k8s/             # Kubernetes manifests (01-08 YAML) & Helm chart
 ├── repository/
 │   ├── excel_repository.py    # Data access layer for Excel persistence
 │   └── mysql_repository.py    # Data access layer for MySQL via SQLAlchemy
-├── terf/                      # Infrastructure as Code (Terraform & K8s)
-│   ├── environment/           # Cloud environments setup
-│   │   ├── aws/               # AWS ECS/EKS Infrastructure modules
-│   │   └── gcp/               # GCP Infrastructure modules
-│   ├── modules/               # Reusable Terraform modules
-│   ├── backend.tf             # S3 backend & DynamoDB state locking
-│   ├── dns_acm.tf             # Route53 DNS & ACM SSL Certificate management
-│   ├── ecr.tf                 # AWS ECR container repository setup
-│   ├── ecs.tf                 # AWS ECS Fargate cluster, service, & task definitions
-│   └── main.tf / variables.tf # Primary terraform provider & input configuration
 ├── tests/                     # Unit and integration test suite (pytest)
 ├── ui/
 │   └── gui_app.py             # Tkinter Desktop GUI interface
@@ -155,6 +149,10 @@ inventory-db-aws-gcp-tf-k8/
 ├── run_api.py                 # Entry point for FastAPI backend
 └── run_gui.py                 # Entry point for Desktop GUI
 ```
+
+### Deployment Options
+* **Cloud Serverless (CI/CD Automated)**: Deployed automatically to **AWS ECS** and **GCP Cloud Run** via GitHub Actions and Terraform (`environment/aws`, `environment/gcp`).
+* **Kubernetes Cluster (Optional / Local)**: Standalone K8s manifests (`inventory-k8s/`) for local simulation (Minikube/Docker Desktop) or multi-cloud container orchestration (EKS/GKE).
 
 Generated cache files, local environment files, database data, test artifacts, and private Excel files are intentionally omitted from this structure.
 
