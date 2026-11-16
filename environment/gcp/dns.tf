@@ -5,6 +5,16 @@ resource "google_dns_managed_zone" "primary_zone" {
   description = "Managed DNS zone for Cloud Run"
   project     = var.gcp_project_id
 }
+# ==============================================================================
+# TWO-STEP DEPLOYMENT NOTE (Custom Domain):
+# Keep sections #2 and #3 commented out during the INITIAL `terraform apply`.
+# 1. Run the first `terraform apply` to create the Cloud DNS zone (#1) and get
+#    the 4 Google NS records from the output (#4).
+# 2. Update the NS records at your domain registrar (e.g., Namecheap) and verify
+#    domain ownership in Google Search Console.
+# 3. Uncomment sections #2 and #3 below, then run `terraform apply` a second time
+#    to bind the custom domain and provision the managed SSL certificate.
+# ==============================================================================
 
 # 2. Configure Cloud Run Domain Mapping
 # resource "google_cloud_run_domain_mapping" "custom_domain" {

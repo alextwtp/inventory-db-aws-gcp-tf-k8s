@@ -26,3 +26,9 @@ variable "db_username" {
   type        = string
   default     = "admin"
 }
+
+variable "image_url" {
+  description = "The URL of the Docker image for the application"
+  type        = string
+  default     = "gcr.io/cloudrun/hello"
+}
