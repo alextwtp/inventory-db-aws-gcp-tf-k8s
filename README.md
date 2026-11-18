@@ -114,7 +114,7 @@ AWS RDS MySQL Database
 Key project files and directories:
 
 ```text
-inventory-db-aws-gcp-tf-k8/
+inventory-db-aws-gcp-tf-k8s/
 ├── .github/
 │   └── workflows/
 │       └── deploy-aws.yml     # GitHub Actions CI/CD pipeline configuration
@@ -178,8 +178,8 @@ Generated cache files, local environment files, database data, test artifacts, a
 ### 1. Clone Repository & Setup Virtual Environment
 
 ```bash
-git clone https://github.com/alextwtp/inventory-db-aws-gcp-tf-k8.git
-cd inventory-db-aws-gcp-tf-k8
+git clone https://github.com/alextwtp/inventory-db-aws-gcp-tf-k8s.git
+cd inventory-db-aws-gcp-tf-k8s
 
 # Create and activate virtual environment
 python3 -m venv venv
