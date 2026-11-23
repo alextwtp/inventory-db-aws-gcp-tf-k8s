@@ -117,7 +117,8 @@ Key project files and directories:
 inventory-db-aws-gcp-tf-k8s/
 ├── .github/
 │   └── workflows/
-│       └── deploy-aws.yml     # GitHub Actions CI/CD pipeline configuration
+│       ├── deploy-aws.yml     # GitHub Actions CI/CD pipeline configuration fofr AWS
+│       ├── deploy-gcp.yml     # GitHub Actions CI/CD pipeline configuration fofr GCP      
 ├── api/
 │   └── fastapi_app.py         # FastAPI instance setup and route definitions
 ├── app/
