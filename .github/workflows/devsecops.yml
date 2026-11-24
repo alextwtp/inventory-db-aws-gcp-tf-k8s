@@ -1,0 +1,113 @@
+name: DevSecOps Security Guardrails
+
+on:
+  workflow_dispatch: # Only execute when manually triggered on the GitHub Actions webpage, never accidentally on cloud deployment
+
+jobs:
+  # 1. Secret Scanning: Check Git history for hardcoded API Keys or passwords
+  secret-scanning:
+    name: 1. Gitleaks Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # 2. Container & Dependency Scanning: Scan Docker images and Python packages for high-risk vulnerabilities
+  container-scanning:
+    name: 2. Trivy Container & SCA Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build local Docker image for scanning
+        run: docker build -t inventory-app:scan-test .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: 'inventory-app:scan-test'
+          format: 'table'
+          exit-code: '0' # Observation mode: output complete report but don't block workflow
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+
+  # 3. IaC Security Scanning: Static check of Terraform infrastructure for security compliance
+  iac-scanning:
+    name: 3. Checkov Terraform IaC Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Checkov IaC scanner
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: terf/ # Perform a security scan on your Terraform module directory
+          framework: terraform
+          soft_fail: true  # Observation mode: output compliance recommendations but don't block workflow
+          output_format: cli
+
+
+
+
+
+
+
+
+
+
+
+
+
+# name: DevSecOps Security Guardrails
+
+# on:
+#     workflow_dispatch:
+
+# jobs:
+#   # 1. Avoid hardcoding API keys or passwords in the code
+#   secret-scanning:
+#     name: 1. Gitleaks Secret Scan
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
+#       - name: Run Gitleaks
+#         uses: gitleaks/gitleaks-action@v2
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+#   # 2. Scan container images for high-risk OS/package vulnerabilities
+#   name: Container Security Scan (Trivy)
+
+#   on:
+#     workflow_dispatch: # 僅在 GitHub Actions 網頁手動點擊「Run workflow」時執行，絕不誤觸部署！
+
+#   jobs:
+#     trivy-scan:
+#       runs-on: ubuntu-latest
+#       steps:
+#         - name: Checkout code
+#           uses: actions/checkout@v4
+
+#         - name: Build local Docker image for scanning
+#           run: docker build -t inventory-app:scan-test .
+
+#         - name: Run Trivy vulnerability scanner
+#           uses: aquasecurity/trivy-action@0.28.0
+#           with:
+#             image-ref: 'inventory-app:scan-test'
+#             format: 'table'
+#             exit-code: '0'
+#             ignore-unfixed: true
+#             severity: 'CRITICAL,HIGH'
