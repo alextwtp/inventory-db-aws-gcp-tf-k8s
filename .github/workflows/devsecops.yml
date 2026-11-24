@@ -21,23 +21,26 @@ jobs:
 
   # 2. Container & Dependency Scanning: Scan Docker images and Python packages for high-risk vulnerabilities
   container-scanning:
-    name: 2. Trivy Container & SCA Scan
+    name: 2. Trivy Container & SCA Scan (${{ matrix.target }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [aws, gcp] # Scan Dockerfile.aws and Dockerfile.gcp 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build local Docker image for scanning
-        run: docker build -t inventory-app:scan-test .
+      - name: Build local Docker image (${{ matrix.target }})
+        run: docker build -f Dockerfile.${{ matrix.target }} -t inventory-app:${{ matrix.target }}-scan .
 
-      - name: Run Trivy vulnerability scanner
+      - name: Run Trivy vulnerability scanner (${{ matrix.target }})
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'inventory-app:scan-test'
+          image-ref: 'inventory-app:${{ matrix.target }}-scan'
           format: 'table'
-          exit-code: '0' # Observation mode: output complete report but don't block workflow
+          exit-code: '0' # 觀察模式：輸出完整報告但不阻斷流程
           ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
+          severity: 'CRITICAL,HIGH'     
 
   # 3. IaC Security Scanning: Static check of Terraform infrastructure for security compliance
   iac-scanning:
