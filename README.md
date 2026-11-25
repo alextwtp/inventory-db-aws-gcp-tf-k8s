@@ -1,9 +1,11 @@
 # Inventory Management System (AWS, Terraform & Kubernetes)
 
-![CI](https://github.com/alextwtp/inventory-db-aws-terraform-k8s/actions/workflows/deploy-aws.yml/badge.svg)
+![CI](https://github.com/alextwtp/inventory-db-aws-gcp-tf-k8s/actions/workflows/deploy-aws.yml/badge.svg)
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat&logo=fastapi&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat&logo=mysql&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-ECS%20%7C%20RDS%20%7C%20EKS-FF9900?style=flat&logo=amazonwebservices&logoColor=white)
+![GCP](https://img.shields.io/badge/GCP-Cloud%20Run%20%7C%20Cloud%20SQL-4285F4?style=flat&logo=googlecloud&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?style=flat&logo=docker&logoColor=white)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-Enabled-326CE5?style=flat&logo=kubernetes&logoColor=white)
 ![Terraform](https://img.shields.io/badge/Terraform-IaC-7B42BC?style=flat&logo=terraform&logoColor=white)
@@ -15,9 +17,10 @@ An end-to-end, lightweight inventory management platform designed for daily stoc
 ### 💡 Project Evolution
 * **v1.0 (Desktop MVP):** Originally built as an internal tool for a small business, utilizing a **Tkinter GUI** with **Excel-based storage** for quick operational deployment.
 * **v2.0 (Production Backend):** Refactored into a scalable enterprise solution powered by **FastAPI**, **MySQL**, **SQLAlchemy ORM**, **Docker Compose**, automated testing, **GitHub Actions CI**, and **Docker Hub** integration.
-* **v3.0 (Cloud-Native Infrastructure):** Extended with **AWS Cloud Infrastructure** (ECS Fargate, RDS, ALB, ACM, KMS) automated via **Terraform (IaC)** for production-grade cloud deployment.
-* **v4.0 (Next-Gen Container Orchestration):** Migrated and expanded infrastructure to **AWS EKS (Elastic Kubernetes Service)** and **Kubernetes Orchestration**, implementing Helm charts, Terraform-managed K8s manifests, and Horizontal Pod Autoscaling (HPA) for enterprise-grade workloads.
-* **v4.1 (Observability & Monitoring):** Integrated Prometheus & Grafana stack via Helm, configuring custom K8s metrics dashboards and FastAPI endpoint telemetry. (in progress)
+* **v3.0 (Multi-Cloud Serverless Infrastructure):** Extended with **AWS** (ECS Fargate, RDS, ALB, ACM, KMS) and **GCP** (Cloud Run, Cloud SQL, Artifact Registry) automated via modular **Terraform (IaC)** and OIDC keyless CI/CD pipelines.
+* **v4.0 (Next-Gen Container Orchestration):** Expanded infrastructure to **Kubernetes Orchestration** (EKS / GKE / local Kind), implementing custom Helm charts, Terraform-managed K8s manifests, and Horizontal Pod Autoscaling (HPA) for enterprise-grade workloads.
+* **v4.1 (DevSecOps Security Guardrails):** Integrated automated security scanning workflows featuring **Gitleaks** (secret detection), **Trivy** (multi-cloud container & dependency SCA scanning), and **Checkov** (Terraform IaC policy compliance).
+* **v4.2 (Observability & Monitoring):** Integrating Prometheus & Grafana stack via Helm for custom K8s metrics dashboards and FastAPI endpoint telemetry. *(in progress)*
 
 ---
 
@@ -44,13 +47,11 @@ An end-to-end, lightweight inventory management platform designed for daily stoc
 * **AI CI Diagnosis:** Integrated OpenAI API (`gpt-4o-mini`) to automatically diagnose CI pipeline test failures.
 * **AI Code Review:** Automated PR code reviews and quality checks powered by CodeRabbit AI.
 
-### ☁️ AWS Cloud & Kubernetes Orchestration (IaC & EKS)
-* **Kubernetes Migration & Management:** Deployment architecture leveraging AWS EKS, custom Helm charts, and Terraform-managed Kubernetes manifests.
-* **Autoscaling & Resilience:** Configured Horizontal Pod Autoscaler (HPA) for dynamic container workloads and dynamic traffic demands.
-* **S3 + DynamoDB Remote Backend:** Secure state management with automated DynamoDB state-locking for IaC collaboration.
-* **AWS ECS & ECR Containerization:** Automated build pipelines targeting Amazon ECR with serverless deployment capabilities on AWS ECS Fargate.
-* **AWS Secrets Manager & KMS:** Dynamic runtime injection of RDS database credentials and API secrets with KMS key management.
-* **Domain, Route 53 & SSL (ACM):** Provisioned custom domain routing via Route 53 with automated SSL/TLS certificate issuing through AWS ACM.
+### ☁️ Multi-Cloud Infrastructure & Kubernetes Orchestration
+* **Multi-Cloud Serverless Deployment:** Automated dual-cloud delivery supporting **AWS** (ECS Fargate, ECR, RDS MySQL, ALB, Route 53, ACM) and **GCP** (Cloud Run, Artifact Registry, Cloud SQL MySQL) with custom domain routing.
+* **Kubernetes Migration & Management:** Container orchestration architecture leveraging custom Helm charts, Terraform-managed Kubernetes manifests, and Horizontal Pod Autoscaler (HPA) for dynamic traffic scaling.
+* **IaC State & Modular Architecture:** Decoupled Terraform modules (`environment/aws`, `environment/gcp`) with S3 + DynamoDB remote state-locking for safe infrastructure management.
+* **Zero-Trust Secrets & OIDC Auth:** Dynamic runtime credential injection via AWS Secrets Manager + KMS and GCP Secret Manager, paired with passwordless GitHub Actions OIDC cloud authentication.
 
 ---
 
@@ -70,7 +71,7 @@ graph TD
 
 ### 2. Cloud-Native Backend Architecture (FastAPI + Cloud Infrastructure)
 
-The Excel-based GUI is retained as the stable original implementation. The FastAPI + MySQL path demonstrates how the business logic evolves into a containerized, cloud-native RESTful API deployed on AWS infrastructure (ECS / EKS) via Terraform.
+The Excel-based GUI is retained as the stable original implementation. The FastAPI + MySQL path demonstrates how the business logic evolves into a containerized, cloud-native RESTful API deployed across multi-cloud infrastructure (AWS & GCP) and Kubernetes via Terraform.
 
 #### ☁️ AWS Cloud Infrastructure
 
@@ -92,6 +93,22 @@ graph TD
     ALB -->|Port 80| ECS
     ECS -->|SQLAlchemy ORM| RDS
 ```
+#### ☁️ GCP Cloud Infrastructure
+
+```mermaid
+graph TD
+    User2[Internet / Client] --> LB[GCP Cloud Run Managed HTTPS / Custom Domain]
+    
+    subgraph GCP [Google Cloud Platform]
+        CR[Cloud Run Serverless Container]
+        CSQL[(Cloud SQL MySQL)]
+        SM[GCP Secret Manager]
+    end
+
+    LB --> CR
+    CR -->|Cloud SQL Auth Proxy / TLS| CSQL
+    SM -.->|Runtime Injection| CR
+```
 
 ```text
 HTTP Client / Swagger UI
@@ -104,7 +121,7 @@ MySQLRepository (Persistence Abstraction)
     ↓
 SQLAlchemy ORM
     ↓
-AWS RDS MySQL Database
+Cloud MySQL Database (AWS RDS / GCP Cloud SQL)
 ```
 
 ---
@@ -117,8 +134,9 @@ Key project files and directories:
 inventory-db-aws-gcp-tf-k8s/
 ├── .github/
 │   └── workflows/
-│       ├── deploy-aws.yml     # GitHub Actions CI/CD pipeline configuration fofr AWS
-│       ├── deploy-gcp.yml     # GitHub Actions CI/CD pipeline configuration fofr GCP      
+│       ├── deploy-aws.yml     # GitHub Actions CI/CD pipeline configuration for AWS
+│       ├── deploy-gcp.yml     # GitHub Actions CI/CD pipeline configuration for GCP
+│       └── devsecops.yml      # Automated DevSecOps Security Guardrails (Gitleaks + trivy + Checkov) 
 ├── api/
 │   └── fastapi_app.py         # FastAPI instance setup and route definitions
 ├── app/
@@ -465,11 +483,19 @@ The application image is packaged and published to Docker Hub for public verific
 * **Versioned Tag:** `alextwtpyeh/inventory-db-aws-terraform-k8s:v4.0.0`
 * **Latest Tag:** `alextwtpyeh/inventory-db-aws-terraform-k8s:latest`
 
+* **Repository:** `alextwtpyeh/inventory-db-gcp-terraform-k8s`
+* **Versioned Tag:** `alextwtpyeh/inventory-db-gcp-terraform-k8s:v4.0.0`
+* **Latest Tag:** `alextwtpyeh/inventory-db-gcp-terraform-k8s:latest`
+
 ### Pull & Run Verification:
 
 ```bash
 docker pull alextwtpyeh/inventory-db-aws-terraform-k8s:latest
 docker run --rm alextwtpyeh/inventory-db-aws-terraform-k8s:latest pytest -q
+
+docker pull alextwtpyeh/inventory-db-gcp-terraform-k8s:latest
+docker run --rm alextwtpyeh/inventory-db-gcp-terraform-k8s:latest pytest -q
+
 ```
 
 ---
@@ -481,6 +507,7 @@ The project adheres to strict **DevSecOps** principles, zero-trust configuration
 * **Credential Isolation:** Production runtime credentials reside strictly in `.env` (excluded via `.gitignore`).
 * **CI/CD Secret Store:** Sensitive variables (`DOCKERHUB_TOKEN`, `OPENAI_API_KEY`) are encrypted within GitHub Repository Secrets.
 * **Sanitized Data Fixtures:** Only synthetic, non-sensitive sample datasets are committed to source control.
+* **DevSecOps Security Guardrails:** Automated Gitleaks Secret Scan, multi-cloud Trivy Container & SCA Scan (AWS/GCP), and Checkov Terraform IaC Scan via on-demand GitHub Actions workflow (`devsecops.yml`).
 
 ---
 
